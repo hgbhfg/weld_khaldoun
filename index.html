@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carthage AI - قرطاج الذكي</title>
+    <title>Carthage AI Pro - قرطاج الذكي الاحترافي</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --accent: #ff2d55;
-            --magic: #a855f7;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
         }
@@ -34,13 +33,9 @@
             font-family: 'Bebas Neue', sans-serif;
             letter-spacing: 8px;
             animation: pulse 2s infinite alternate;
-            text-shadow: 0 0 30px rgba(255, 45, 85, 0.5);
         }
 
-        @keyframes pulse {
-            from { opacity: 0.3; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1.1); }
-        }
+        @keyframes pulse { from { opacity: 0.3; transform: scale(0.9); } to { opacity: 1; transform: scale(1.1); } }
 
         body {
             font-family: 'Readex Pro', sans-serif;
@@ -50,14 +45,13 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         .app-container {
             width: 100%;
             max-width: 450px;
             padding: 20px;
-            padding-bottom: 120px;
+            padding-bottom: 140px;
         }
 
         header { text-align: center; margin-bottom: 20px; }
@@ -69,7 +63,6 @@
             margin: 0;
         }
 
-        /* منطقة المعاينة */
         .preview-area {
             position: relative;
             background: var(--glass);
@@ -84,13 +77,9 @@
             justify-content: center;
         }
 
-        #imageCanvas {
-            max-width: 100%;
-            display: none;
-            touch-action: none;
-        }
+        #imageCanvas { max-width: 100%; display: none; touch-action: none; }
 
-        /* لوحات التحكم */
+        /* لوحة الضبط الشاملة */
         .glass-panel {
             background: var(--glass);
             border: 1px solid var(--border);
@@ -98,12 +87,15 @@
             padding: 15px;
             margin-bottom: 15px;
             display: none;
+            max-height: 350px;
+            overflow-y: auto; /* للسماح بالتمرير داخل الأدوات */
         }
 
-        .panel-title { font-size: 0.9rem; color: #D4AF37; margin-bottom: 12px; text-align: right; font-weight: bold; }
+        .panel-title { font-size: 0.9rem; color: #D4AF37; margin-bottom: 15px; text-align: right; font-weight: bold; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
 
-        .control-row { margin-bottom: 12px; }
-        .control-row label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 5px; text-align: right; }
+        .control-row { margin-bottom: 15px; }
+        .control-row label { display: flex; justify-content: space-between; font-size: 0.75rem; color: #bbb; margin-bottom: 8px; }
+        .control-row span { color: var(--accent); font-weight: bold; }
 
         input[type="range"] {
             width: 100%; height: 4px; background: #333; border-radius: 2px; appearance: none; accent-color: var(--accent);
@@ -115,7 +107,7 @@
             bottom: 0; left: 50%;
             transform: translateX(-50%);
             width: 100%; max-width: 450px;
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--border);
             display: flex;
@@ -133,37 +125,24 @@
         .tool-btn.active { color: var(--accent); }
         .tool-icon { font-size: 1.3rem; }
 
-        .filters-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .filter-chip {
-            flex: 0 0 auto; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: #ddd; padding: 8px 16px; border-radius: 50px; font-size: 0.7rem;
-        }
+        #downloadBtn { background: #fff; color: #000; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; }
 
-        #downloadBtn {
-            background: #fff; color: #000; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold;
-        }
-
-        #upload-btn-label {
-            background: var(--accent); color: white; padding: 15px 40px; border-radius: 50px; font-weight: bold; cursor: pointer;
-        }
-
-        #brush-cursor {
-            width: 20px; height: 20px; border: 2px solid #fff; border-radius: 50%;
-            position: fixed; pointer-events: none; display: none; z-index: 1000;
-        }
+        #upload-btn-label { background: var(--accent); color: white; padding: 15px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+        
+        #brush-cursor { width: 25px; height: 25px; border: 2px solid #fff; border-radius: 50%; position: fixed; pointer-events: none; display: none; z-index: 1000; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div class="ai-loader">CARTHAGE AI</div>
+        <div class="ai-loader">CARTHAGE AI PRO</div>
     </div>
     
     <div id="brush-cursor"></div>
 
     <div class="app-container">
         <header>
-            <h1>Carthage AI</h1>
+            <h1>Carthage AI Pro</h1>
         </header>
 
         <div class="preview-area" id="dropZone">
@@ -173,32 +152,42 @@
         </div>
 
         <div class="glass-panel" id="adjustPanel">
-            <div class="panel-title">الضبط الاحترافي</div>
-            <div class="control-row"><label>السطوع</label><input type="range" id="brightness" min="50" max="150" value="100"></div>
-            <div class="control-row"><label>التباين</label><input type="range" id="contrast" min="50" max="150" value="100"></div>
-            <div class="control-row"><label>التشبع</label><input type="range" id="saturate" min="0" max="200" value="100"></div>
-            <div class="control-row"><label>درجة الحرارة (Warmth)</label><input type="range" id="warmth" min="-50" max="50" value="0"></div>
-            <div class="control-row"><label>الحدة (Blur)</label><input type="range" id="blur" min="0" max="10" value="0" step="0.1"></div>
+            <div class="panel-title">استوديو الضبط الاحترافي</div>
+            
+            <div class="control-row"><label>السطوع <span>Brightness</span></label><input type="range" id="brightness" min="50" max="150" value="100"></div>
+            
+            <div class="control-row"><label>التباين <span>Contrast</span></label><input type="range" id="contrast" min="50" max="150" value="100"></div>
+            
+            <div class="control-row"><label>الألوان <span>Saturation</span></label><input type="range" id="saturate" min="0" max="200" value="100"></div>
+            
+            <div class="control-row"><label>درجة الحرارة <span>Warmth</span></label><input type="range" id="warmth" min="-100" max="100" value="0"></div>
+            
+            <div class="control-row"><label>الحدة/الغباش <span>Blur</span></label><input type="range" id="blur" min="0" max="10" value="0" step="0.1"></div>
+            
+            <div class="control-row"><label>الظلال <span>Darkness</span></label><input type="range" id="dark" min="0" max="100" value="0"></div>
+
+            <div class="control-row"><label>قلب الألوان <span>Invert</span></label><input type="range" id="invert" min="0" max="100" value="0"></div>
+            
+            <button onclick="resetAll()" style="width:100%; background:var(--glass); border:1px solid var(--border); color:#fff; padding:10px; border-radius:10px; font-size: 0.8rem;">إعادة تعيين الضبط ↺</button>
         </div>
 
         <div class="glass-panel" id="filterPanel">
-            <div class="panel-title">فلاتر ذكية</div>
-            <div class="filters-scroll">
-                <div class="filter-chip" onclick="setPreset('none')">الأصل</div>
-                <div class="filter-chip" onclick="setPreset('contrast(1.2) saturate(1.2) brightness(1.1)')">Vivid AI</div>
-                <div class="filter-chip" onclick="setPreset('sepia(0.5) contrast(1.1) brightness(0.9)')">Vintage</div>
-                <div class="filter-chip" onclick="setPreset('grayscale(100%) contrast(1.3)')">Noir</div>
-                <div class="filter-chip" onclick="setPreset('hue-rotate(180deg) saturate(1.5)')">Cyber</div>
+            <div class="panel-title">الفلاتر الذكية</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="tool-btn" style="background:var(--glass); padding:10px; border-radius:10px;" onclick="setPreset('none')">الأصل</button>
+                <button class="tool-btn" style="background:var(--glass); padding:10px; border-radius:10px;" onclick="setPreset('contrast(1.4) saturate(1.4) brightness(1.1)')">Vivid AI</button>
+                <button class="tool-btn" style="background:var(--glass); padding:10px; border-radius:10px;" onclick="setPreset('sepia(0.6) brightness(0.9)')">Vintage</button>
+                <button class="tool-btn" style="background:var(--glass); padding:10px; border-radius:10px;" onclick="setPreset('grayscale(100%) brightness(1.1)')">Noir</button>
             </div>
         </div>
 
         <div class="glass-panel" id="eraserPanel">
-            <div class="panel-title">الممحاة المتطورة</div>
+            <div class="panel-title">الممحاة الذكية</div>
             <div class="control-row">
-                <label>حجم الفرشاة</label>
-                <input type="range" id="brushSize" min="5" max="60" value="25">
+                <label>حجم المسح</label>
+                <input type="range" id="brushSize" min="5" max="80" value="30">
             </div>
-            <button onclick="resetAll()" style="width:100%; background:var(--glass); border:1px solid var(--border); color:#fff; padding:10px; border-radius:10px;">إعادة تعيين الصورة</button>
+            <p style="font-size: 0.7rem; color: #666; text-align: center;">استخدم إصبعك لمسح العناصر غير المرغوب فيها</p>
         </div>
     </div>
 
@@ -213,13 +202,12 @@
         const imageLoader = document.getElementById('imageLoader');
         const canvas = document.getElementById('imageCanvas');
         const ctx = canvas.getContext('2d');
-        const br = document.getElementById('brightness'), con = document.getElementById('contrast'), 
-              sat = document.getElementById('saturate'), warm = document.getElementById('warmth'), 
-              blr = document.getElementById('blur'), brushSizeInput = document.getElementById('brushSize'),
-              brushCursor = document.getElementById('brush-cursor');
+        const controls = ['brightness', 'contrast', 'saturate', 'warmth', 'blur', 'dark', 'invert'];
+        const brushCursor = document.getElementById('brush-cursor');
 
-        let imgObj = new Image(), isEraserMode = false, isDrawing = false, brushSize = 25;
+        let imgObj = new Image(), isEraserMode = false, isDrawing = false, brushSize = 30;
 
+        // واجهة الدخول
         window.onload = () => { setTimeout(() => { 
             document.getElementById('splash-screen').style.opacity = '0';
             setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 800);
@@ -243,33 +231,53 @@
 
         function update() {
             if (isEraserMode) return;
-            const warmthEffect = warm.value > 0 ? `sepia(${warm.value}%)` : `hue-rotate(${Math.abs(warm.value)}deg)`;
-            ctx.filter = `brightness(${br.value}%) contrast(${con.value}%) saturate(${sat.value}%) ${warmthEffect} blur(${blr.value}px)`;
+            const vals = {};
+            controls.forEach(id => vals[id] = document.getElementById(id).value);
+            
+            const warmth = vals.warmth > 0 ? `sepia(${vals.warmth}%)` : `hue-rotate(${Math.abs(vals.warmth)}deg)`;
+            
+            ctx.filter = `
+                brightness(${vals.brightness}%) 
+                contrast(${vals.contrast}%) 
+                saturate(${vals.saturate}%) 
+                ${warmth} 
+                blur(${vals.blur}px) 
+                brightness(${100 - vals.dark/2}%)
+                invert(${vals.invert}%)
+            `;
             ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
         }
 
-        [br, con, sat, warm, blr].forEach(i => i.oninput = update);
+        controls.forEach(id => document.getElementById(id).oninput = update);
 
         function showPanel(name) {
             document.querySelectorAll('.glass-panel').forEach(p => p.style.display = 'none');
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(name + 'Panel').style.display = 'block';
-            event.currentTarget.classList.add('active');
+            if(event) event.currentTarget.classList.add('active');
             isEraserMode = (name === 'eraser');
-            canvas.style.cursor = isEraserMode ? 'none' : 'default';
+            brushCursor.style.display = isEraserMode ? 'block' : 'none';
         }
 
-        function setPreset(f) { ctx.filter = f; ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height); }
-        function resetAll() { [br, con, sat, warm, blr].forEach(i => i.value = i.getAttribute('value')); update(); }
-
-        // الممحاة
-        function startEraserMode() { brushCursor.style.display = 'block'; }
-        brushSizeInput.oninput = (e) => { brushSize = e.target.value; brushCursor.style.width = brushSize + 'px'; brushCursor.style.height = brushSize + 'px'; };
-
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            return { x: (e.clientX || e.touches[0].clientX) - rect.left, y: (e.clientY || e.touches[0].clientY) - rect.top };
+        function resetAll() { 
+            controls.forEach(id => {
+                const el = document.getElementById(id);
+                el.value = el.getAttribute('value');
+            });
+            update(); 
         }
+
+        function setPreset(f) { 
+            ctx.filter = f; 
+            ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height); 
+        }
+
+        // منطق الممحاة
+        document.getElementById('brushSize').oninput = (e) => { 
+            brushSize = e.target.value; 
+            brushCursor.style.width = brushSize + 'px'; 
+            brushCursor.style.height = brushSize + 'px'; 
+        };
 
         canvas.addEventListener('pointerdown', (e) => { if(!isEraserMode) return; isDrawing = true; ctx.beginPath(); });
         canvas.addEventListener('pointermove', (e) => {
@@ -277,16 +285,22 @@
             brushCursor.style.left = (e.clientX || e.touches[0].clientX) - brushSize/2 + 'px';
             brushCursor.style.top = (e.clientY || e.touches[0].clientY) - brushSize/2 + 'px';
             if(!isDrawing) return;
-            const p = getPos(e);
+            const rect = canvas.getBoundingClientRect();
             ctx.globalCompositeOperation = 'destination-out';
-            ctx.lineWidth = brushSize; ctx.lineCap = 'round'; ctx.lineTo(p.x, p.y); ctx.stroke();
+            ctx.lineWidth = brushSize; ctx.lineCap = 'round';
+            ctx.lineTo((e.clientX || e.touches[0].clientX) - rect.left, (e.clientY || e.touches[0].clientY) - rect.top);
+            ctx.stroke();
         });
         window.addEventListener('pointerup', () => { isDrawing = false; ctx.globalCompositeOperation = 'source-over'; });
 
         function downloadImage() {
-            const link = document.createElement('a'); link.download = 'Carthage_AI.png';
-            link.href = canvas.toDataURL(); link.click();
+            const link = document.createElement('a'); 
+            link.download = 'Carthage_Pro_AI.png';
+            link.href = canvas.toDataURL(); 
+            link.click();
         }
     </script>
 </body>
 </html>
+
+        
