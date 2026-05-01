@@ -1,18 +1,53 @@
-<!DOCTYPE html>
+
+            
+        <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carthage Photo - قرطاج فوتو</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --tunisian-red: #E70013; /* أحمر العلم التونسي */
-            --gold: #D4AF37; /* لون دروع حنبعل */
+            --tunisian-red: #E70013;
+            --gold: #D4AF37;
             --bg: #0b0b0b;
             --card-bg: #1a1a1a;
-            --text: #f0f0f0;
+            --text: #F0F0F0;
         }
 
+        /* واجهة البداية (Netflix Style) */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease-out;
+        }
+
+        .netflix-logo {
+            color: var(--tunisian-red);
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            font-family: 'Bebas Neue', sans-serif;
+            animation: netflixIntro 2.5s forwards;
+            text-shadow: 0 0 15px rgba(231, 0, 19, 0.6);
+        }
+
+        @keyframes netflixIntro {
+            0% { transform: scale(0.8); opacity: 0; letter-spacing: 15px; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0; letter-spacing: 5px; }
+        }
+
+        /* تصميم التطبيق الأساسي */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
@@ -20,9 +55,8 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
         }
 
         .app-container { width: 100%; max-width: 500px; }
@@ -37,7 +71,7 @@
             border-radius: 15px;
             border: 2px solid var(--gold);
             text-align: center;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
 
         .custom-upload {
@@ -47,11 +81,12 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(231, 0, 19, 0.4);
+            display: inline-block;
         }
 
         input[type="file"] { display: none; }
 
-        canvas { width: 100%; border-radius: 10px; margin-bottom: 20px; display: none; border: 1px solid var(--gold); }
+        canvas { width: 100%; border-radius: 10px; margin-bottom: 20px; display: none; border: 1px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
         /* لوحة التحكم اليدوية */
         .manual-controls {
@@ -60,10 +95,11 @@
             border-radius: 15px;
             margin-bottom: 20px;
             display: none;
+            border: 1px solid #333;
         }
 
-        .control-group { margin-bottom: 15px; text-align: right; }
-        .control-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: var(--gold); }
+        .control-group { margin-bottom: 15px; }
+        .control-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: var(--gold); text-align: right; }
         input[type="range"] { width: 100%; accent-color: var(--tunisian-red); }
 
         .filters-grid {
@@ -79,24 +115,32 @@
             color: white;
             padding: 10px 5px;
             border-radius: 8px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
+            transition: 0.2s;
         }
+
+        .btn:active { transform: scale(0.95); background: #333; }
 
         .btn-main {
             grid-column: span 3;
-            background: var(--success, #28a745);
+            background: #28a745;
             border: none;
             font-weight: bold;
             margin-top: 15px;
             padding: 15px;
             font-size: 1rem;
+            border-radius: 10px;
         }
 
-        footer { margin-top: 30px; font-size: 0.7rem; color: #555; }
+        footer { margin-top: 40px; font-size: 0.7rem; color: #555; text-align: center; }
     </style>
 </head>
 <body>
+
+    <div id="splash-screen">
+        <div class="netflix-logo">CARTHAGE PHOTO</div>
+    </div>
 
     <div class="app-container">
         <header>
@@ -126,16 +170,15 @@
             </div>
         </div>
 
-                <div class="filters-grid" id="filtersUI">
+        <div class="filters-grid" id="filtersUI">
             <button class="btn" onclick="setPreset('sepia(0.6) contrast(1.2) brightness(0.9) hue-rotate(-10deg)')">فيلم 1970</button>
             <button class="btn" onclick="setPreset('grayscale(100%) contrast(1.5) brightness(0.9)')">كاميرا حربية</button>
             <button class="btn" onclick="setPreset('contrast(1.1) brightness(1.1) saturate(1.3) sepia(0.2)')">بولارايت</button>
             <button class="btn" onclick="setPreset('brightness(1.1) saturate(0.7) contrast(0.9) hue-rotate(20deg)')">ثمانينات</button>
             <button class="btn" onclick="setPreset('contrast(1.4) sepia(0.3) saturate(1.4) hue-rotate(-30deg)')">سينمائي قديم</button>
             <button class="btn" onclick="resetAll()">إعادة الأصل</button>
-            <button class="btn btn-main" onclick="downloadImage()">حفظ في الهاتف (نصر قرطاج) ↓</button>
-                </div>
-        
+            <button class="btn btn-main" onclick="downloadImage()">حفظ في الهاتف ↓</button>
+        </div>
 
         <footer>صُنع بلمسة تونسية على GitHub</footer>
     </div>
@@ -144,13 +187,20 @@
         const imageLoader = document.getElementById('imageLoader');
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
-        
-        // عناصر التحكم اليدوي
         const brightness = document.getElementById('brightness');
         const contrast = document.getElementById('contrast');
         const saturate = document.getElementById('saturate');
 
         let imgObj = new Image();
+
+        // واجهة البداية
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 1000);
+            }, 2500);
+        });
 
         imageLoader.addEventListener('change', function(e) {
             const reader = new FileReader();
@@ -169,33 +219,28 @@
             reader.readAsDataURL(e.target.files[0]);
         });
 
-        // الاستماع لتغييرات أشرطة التحكم
         [brightness, contrast, saturate].forEach(input => {
             input.addEventListener('input', updateImage);
         });
 
         function updateImage() {
-            const filterString = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturate.value}%)`;
-            ctx.filter = filterString;
+            ctx.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturate.value}%)`;
             ctx.drawImage(imgObj, 0, 0);
         }
 
         function setPreset(filter) {
-            // إعادة تصفير الأشرطة عند اختيار فلتر جاهز (اختياري)
             ctx.filter = filter;
             ctx.drawImage(imgObj, 0, 0);
         }
 
         function resetAll() {
-            brightness.value = 100;
-            contrast.value = 100;
-            saturate.value = 100;
+            brightness.value = 100; contrast.value = 100; saturate.value = 100;
             updateImage();
         }
 
         function downloadImage() {
             const link = document.createElement('a');
-            link.download = 'Carthage_Photo.png';
+            link.download = 'Carthage_Photo_Edit.png';
             link.href = canvas.toDataURL();
             link.click();
         }
