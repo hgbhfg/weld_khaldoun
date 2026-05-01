@@ -1,249 +1,278 @@
-
-            
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carthage Photo - قرطاج فوتو</title>
+    <title>Carthage AI - قرطاج الذكي</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Readex+Pro:wght@300;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --tunisian-red: #E70013;
-            --gold: #D4AF37;
-            --bg: #0b0b0b;
-            --card-bg: #1a1a1a;
-            --text: #F0F0F0;
+            --accent: #ff2d55;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* واجهة البداية (Netflix Style) */
+        /* واجهة الدخول - التطور */
         #splash-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: #000;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 1s ease-out;
+            transition: 0.8s ease-in-out;
         }
 
-        .netflix-logo {
-            color: var(--tunisian-red);
-            font-size: 3rem;
-            font-weight: 900;
-            letter-spacing: 5px;
+        .ai-loader {
+            color: var(--accent);
+            font-size: 2.5rem;
             font-family: 'Bebas Neue', sans-serif;
-            animation: netflixIntro 2.5s forwards;
-            text-shadow: 0 0 15px rgba(231, 0, 19, 0.6);
+            letter-spacing: 8px;
+            animation: pulse 2s infinite alternate;
+            text-shadow: 0 0 30px rgba(255, 45, 85, 0.5);
         }
 
-        @keyframes netflixIntro {
-            0% { transform: scale(0.8); opacity: 0; letter-spacing: 15px; }
-            50% { opacity: 1; }
-            100% { transform: scale(1.1); opacity: 0; letter-spacing: 5px; }
+        @keyframes pulse {
+            from { opacity: 0.3; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1.1); }
         }
 
-        /* تصميم التطبيق الأساسي */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Readex Pro', sans-serif;
+            background: #080808;
+            color: #fff;
             margin: 0;
-            padding: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        .app-container { width: 100%; max-width: 500px; }
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
 
-        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
-        header h1 { color: var(--tunisian-red); margin: 0; font-size: 1.8rem; }
-        header p { color: var(--gold); font-style: italic; margin: 5px 0; font-size: 0.9rem; }
-
-        .upload-section {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 15px;
-            border: 2px solid var(--gold);
+        /* رأس الصفحة العصري */
+        header {
             text-align: center;
-            margin: 20px 0;
+            margin-bottom: 30px;
         }
 
-        .custom-upload {
-            background: var(--tunisian-red);
-            padding: 12px 30px;
+        header h1 {
+            background: linear-gradient(45deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        /* منطقة عرض الصورة */
+        .preview-area {
+            position: relative;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas { width: 100%; display: none; }
+
+        /* أزرار التحكم */
+        .glass-panel {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* زر التعديل التلقائي السحري */
+        .magic-btn {
+            width: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .control-row { margin-bottom: 15px; }
+        .control-row label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            appearance: none;
+            accent-color: var(--accent);
+        }
+
+        .filters-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            display: none;
+        }
+
+        .filter-chip {
+            flex: 0 0 auto;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: #ddd;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        #upload-btn {
+            background: var(--accent);
+            color: white;
+            padding: 15px 40px;
             border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(231, 0, 19, 0.4);
-            display: inline-block;
         }
-
-        input[type="file"] { display: none; }
-
-        canvas { width: 100%; border-radius: 10px; margin-bottom: 20px; display: none; border: 1px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
-        /* لوحة التحكم اليدوية */
-        .manual-controls {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: none;
-            border: 1px solid #333;
-        }
-
-        .control-group { margin-bottom: 15px; }
-        .control-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: var(--gold); text-align: right; }
-        input[type="range"] { width: 100%; accent-color: var(--tunisian-red); }
-
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            display: none;
-        }
-
-        .btn {
-            background: #2a2a2a;
-            border: 1px solid var(--gold);
-            color: white;
-            padding: 10px 5px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn:active { transform: scale(0.95); background: #333; }
-
-        .btn-main {
-            grid-column: span 3;
-            background: #28a745;
-            border: none;
-            font-weight: bold;
-            margin-top: 15px;
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 10px;
-        }
-
-        footer { margin-top: 40px; font-size: 0.7rem; color: #555; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div class="netflix-logo">CARTHAGE PHOTO</div>
+        <div class="ai-loader">CARTHAGE AI</div>
     </div>
 
     <div class="app-container">
         <header>
-            <h1>Carthage Photo</h1>
-            <p>"على خطى حنبعل.. نصنع الجمال"</p>
+            <h1>Carthage AI</h1>
+            <p style="color:#555; font-size:0.8rem;">تعديل الصور بالذكاء البرمجي</p>
         </header>
 
-        <div class="upload-section" id="uploadBox">
-            <label for="imageLoader" class="custom-upload">ابدأ الرحلة (اختر صورة)</label>
-            <input type="file" id="imageLoader" accept="image/*">
+        <div class="preview-area" id="dropZone">
+            <label id="upload-btn" for="imageLoader">تحميل صورة</label>
+            <input type="file" id="imageLoader" accept="image/*" style="display:none">
+            <canvas id="mainCanvas"></canvas>
         </div>
 
-        <canvas id="mainCanvas"></canvas>
+        <button class="magic-btn" id="magicBtn" onclick="autoEnhance()">✨ تحسين تلقائي ذكي</button>
 
-        <div class="manual-controls" id="manualUI">
-            <div class="control-group">
-                <label>السطوع (Brightness)</label>
-                <input type="range" id="brightness" min="0" max="200" value="100">
+        <div class="glass-panel" id="manualUI" style="display:none">
+            <div class="control-row">
+                <label>السطوع</label>
+                <input type="range" id="brightness" min="50" max="150" value="100">
             </div>
-            <div class="control-group">
-                <label>التباين (Contrast)</label>
-                <input type="range" id="contrast" min="0" max="200" value="100">
-            </div>
-            <div class="control-group">
-                <label>تشبع الألوان (Saturate)</label>
+            <div class="control-row">
+                <label>التشبع</label>
                 <input type="range" id="saturate" min="0" max="200" value="100">
             </div>
         </div>
 
-        <div class="filters-grid" id="filtersUI">
-            <button class="btn" onclick="setPreset('sepia(0.6) contrast(1.2) brightness(0.9) hue-rotate(-10deg)')">فيلم 1970</button>
-            <button class="btn" onclick="setPreset('grayscale(100%) contrast(1.5) brightness(0.9)')">كاميرا حربية</button>
-            <button class="btn" onclick="setPreset('contrast(1.1) brightness(1.1) saturate(1.3) sepia(0.2)')">بولارايت</button>
-            <button class="btn" onclick="setPreset('brightness(1.1) saturate(0.7) contrast(0.9) hue-rotate(20deg)')">ثمانينات</button>
-            <button class="btn" onclick="setPreset('contrast(1.4) sepia(0.3) saturate(1.4) hue-rotate(-30deg)')">سينمائي قديم</button>
-            <button class="btn" onclick="resetAll()">إعادة الأصل</button>
-            <button class="btn btn-main" onclick="downloadImage()">حفظ في الهاتف ↓</button>
+        <div class="filters-scroll" id="filtersUI">
+            <div class="filter-chip" onclick="setPreset('none')">الأصل</div>
+            <div class="filter-chip" onclick="setPreset('contrast(1.2) saturate(1.1) brightness(1.1)')">Vivid</div>
+            <div class="filter-chip" onclick="setPreset('grayscale(100%) contrast(1.2)')">Noir</div>
+            <div class="filter-chip" onclick="setPreset('sepia(0.3) brightness(0.9) contrast(1.2)')">Vintage</div>
+            <div class="filter-chip" onclick="setPreset('hue-rotate(180deg)')">Cyber</div>
         </div>
 
-        <footer>صُنع بلمسة تونسية على GitHub</footer>
+        <button class="download-btn" id="downloadBtn" onclick="downloadImage()">حفظ الصورة</button>
     </div>
 
     <script>
         const imageLoader = document.getElementById('imageLoader');
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
-        const brightness = document.getElementById('brightness');
-        const contrast = document.getElementById('contrast');
-        const saturate = document.getElementById('saturate');
-
+        const br = document.getElementById('brightness');
+        const sat = document.getElementById('saturate');
         let imgObj = new Image();
 
-        // واجهة البداية
-        window.addEventListener('load', () => {
+        window.onload = () => {
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 1000);
-            }, 2500);
-        });
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 800);
+            }, 2000);
+        };
 
-        imageLoader.addEventListener('change', function(e) {
+        imageLoader.onchange = (e) => {
             const reader = new FileReader();
-            reader.onload = function(event) {
-                imgObj.onload = function() {
+            reader.onload = (ev) => {
+                imgObj.onload = () => {
                     canvas.width = imgObj.width;
                     canvas.height = imgObj.height;
                     canvas.style.display = 'block';
+                    document.getElementById('upload-btn').style.display = 'none';
                     document.getElementById('manualUI').style.display = 'block';
-                    document.getElementById('filtersUI').style.display = 'grid';
-                    document.getElementById('uploadBox').style.display = 'none';
-                    updateImage();
+                    document.getElementById('filtersUI').style.display = 'flex';
+                    document.getElementById('magicBtn').style.display = 'block';
+                    document.getElementById('downloadBtn').style.display = 'block';
+                    update();
                 }
-                imgObj.src = event.target.result;
+                imgObj.src = ev.target.result;
             }
             reader.readAsDataURL(e.target.files[0]);
-        });
+        };
 
-        [brightness, contrast, saturate].forEach(input => {
-            input.addEventListener('input', updateImage);
-        });
-
-        function updateImage() {
-            ctx.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturate.value}%)`;
+        function update() {
+            ctx.filter = `brightness(${br.value}%) saturate(${sat.value}%)`;
             ctx.drawImage(imgObj, 0, 0);
         }
 
-        function setPreset(filter) {
-            ctx.filter = filter;
+        [br, sat].forEach(i => i.oninput = update);
+
+        function setPreset(f) {
+            ctx.filter = f;
             ctx.drawImage(imgObj, 0, 0);
         }
 
-        function resetAll() {
-            brightness.value = 100; contrast.value = 100; saturate.value = 100;
-            updateImage();
+        // ميزة التعديل التلقائي
+        function autoEnhance() {
+            br.value = 110; // زيادة الإضاءة قليلاً
+            sat.value = 125; // تحسين الألوان
+            // إضافة لمسة تباين برمجية
+            ctx.filter = `brightness(110%) saturate(125%) contrast(115%)`;
+            ctx.drawImage(imgObj, 0, 0);
+            alert("تم التحسين التلقائي بنجاح! ✨");
         }
 
         function downloadImage() {
             const link = document.createElement('a');
-            link.download = 'Carthage_Photo_Edit.png';
+            link.download = 'Carthage_AI.png';
             link.href = canvas.toDataURL();
             link.click();
         }
     </script>
 </body>
 </html>
+
+            
+                
