@@ -3,149 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhotoPro - محرر الصور الاحترافي</title>
+    <title>Carthage Photo - قرطاج فوتو</title>
     <style>
         :root {
-            --primary: #007aff;
-            --success: #34c759;
-            --bg: #000000;
-            --card-bg: #1c1c1e;
-            --text: #ffffff;
+            --tunisian-red: #E70013; /* أحمر العلم التونسي */
+            --gold: #D4AF37; /* لون دروع حنبعل */
+            --bg: #0b0b0b;
+            --card-bg: #1a1a1a;
+            --text: #f0f0f0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column;
+            flex-direction: center;
             align-items: center;
+            flex-direction: column;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-        }
+        .app-container { width: 100%; max-width: 500px; }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; }
+        header h1 { color: var(--tunisian-red); margin: 0; font-size: 1.8rem; }
+        header p { color: var(--gold); font-style: italic; margin: 5px 0; font-size: 0.9rem; }
 
-        header h1 {
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            background: linear-gradient(to right, #007aff, #00c6ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .upload-card {
+        .upload-section {
             background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px dashed #3a3a3c;
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--gold);
             text-align: center;
             margin-bottom: 20px;
         }
 
-        input[type="file"] {
-            display: none;
-        }
-
         .custom-upload {
-            background: var(--primary);
-            padding: 12px 25px;
-            border-radius: 10px;
+            background: var(--tunisian-red);
+            padding: 12px 30px;
+            border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
-            display: inline-block;
+            box-shadow: 0 4px 15px rgba(231, 0, 19, 0.4);
         }
 
-        #imageCanvas {
-            width: 100%;
+        input[type="file"] { display: none; }
+
+        canvas { width: 100%; border-radius: 10px; margin-bottom: 20px; display: none; border: 1px solid var(--gold); }
+
+        /* لوحة التحكم اليدوية */
+        .manual-controls {
+            background: var(--card-bg);
+            padding: 15px;
             border-radius: 15px;
-            background: #2c2c2e;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             display: none;
         }
 
-        .toolbar {
+        .control-group { margin-bottom: 15px; text-align: right; }
+        .control-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: var(--gold); }
+        input[type="range"] { width: 100%; accent-color: var(--tunisian-red); }
+
+        .filters-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 10px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            display: none;
         }
 
         .btn {
-            background: var(--card-bg);
-            border: 1px solid #3a3a3c;
+            background: #2a2a2a;
+            border: 1px solid var(--gold);
             color: white;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
+            padding: 10px 5px;
+            border-radius: 8px;
+            font-size: 0.75rem;
             cursor: pointer;
         }
 
-        .btn:active {
-            transform: scale(0.95);
-            background: #2c2c2e;
-        }
-
-        .btn-download {
-            grid-column: span 2;
-            background: var(--success);
+        .btn-main {
+            grid-column: span 3;
+            background: var(--success, #28a745);
             border: none;
-            margin-top: 10px;
             font-weight: bold;
+            margin-top: 15px;
+            padding: 15px;
+            font-size: 1rem;
         }
 
-        .footer-tag {
-            margin-top: 40px;
-            font-size: 0.8rem;
-            color: #8e8e93;
-        }
+        footer { margin-top: 30px; font-size: 0.7rem; color: #555; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <header>
-            <h1>PHOTOPRO</h1>
-            <p style="color: #8e8e93; font-size: 0.9rem;">محرر الصور الذكي من هاتفك</p>
+            <h1>Carthage Photo</h1>
+            <p>"على خطى حنبعل.. نصنع الجمال"</p>
         </header>
 
-        <div class="upload-card" id="uploadCard">
-            <label for="imageLoader" class="custom-upload">إضافة صورة +</label>
+        <div class="upload-section" id="uploadBox">
+            <label for="imageLoader" class="custom-upload">ابدأ الرحلة (اختر صورة)</label>
             <input type="file" id="imageLoader" accept="image/*">
-            <p style="font-size: 0.8rem; color: #8e8e93; margin-top: 10px;">اختر صورة لبدء التعديل</p>
         </div>
 
-        <canvas id="imageCanvas"></canvas>
+        <canvas id="mainCanvas"></canvas>
 
-        <div class="toolbar" id="controls" style="display: none;">
-            <button class="btn" onclick="applyFilter('grayscale(100%)')">أبيض وأسود</button>
-            <button class="btn" onclick="applyFilter('sepia(100%)')">طابع كلاسيك</button>
-            <button class="btn" onclick="applyFilter('brightness(130%) contrast(110%)')">تحسين إضاءة</button>
-            <button class="btn" onclick="applyFilter('none')">الأصلية</button>
-            <button class="btn btn-download" onclick="downloadImage()">حفظ الصورة في الهاتف ↓</button>
+        <div class="manual-controls" id="manualUI">
+            <div class="control-group">
+                <label>السطوع (Brightness)</label>
+                <input type="range" id="brightness" min="0" max="200" value="100">
+            </div>
+            <div class="control-group">
+                <label>التباين (Contrast)</label>
+                <input type="range" id="contrast" min="0" max="200" value="100">
+            </div>
+            <div class="control-group">
+                <label>تشبع الألوان (Saturate)</label>
+                <input type="range" id="saturate" min="0" max="200" value="100">
+            </div>
         </div>
 
-        <div class="footer-tag">بواسطة مبرمج GitHub الواعد</div>
+        <div class="filters-grid" id="filtersUI">
+            <button class="btn" onclick="setPreset('grayscale(100%)')">أبيض وأسود</button>
+            <button class="btn" onclick="setPreset('sepia(80%) contrast(110%)')">قرطاج القديمة</button>
+            <button class="btn" onclick="setPreset('hue-rotate(180deg)')">ألوان خيالية</button>
+            <button class="btn" onclick="setPreset('invert(100%)')">سالب (Negative)</button>
+            <button class="btn" onclick="setPreset('blur(2px)')">تغبيش هادئ</button>
+            <button class="btn" onclick="resetAll()">إعادة الأصل</button>
+            <button class="btn btn-main" onclick="downloadImage()">حفظ في الهاتف (نصر قرطاج) ↓</button>
+        </div>
+
+        <footer>صُنع بلمسة تونسية على GitHub</footer>
     </div>
 
     <script>
         const imageLoader = document.getElementById('imageLoader');
-        const canvas = document.getElementById('imageCanvas');
+        const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
-        const controls = document.getElementById('controls');
-        const uploadCard = document.getElementById('uploadCard');
-        let currentFilter = 'none';
+        
+        // عناصر التحكم اليدوي
+        const brightness = document.getElementById('brightness');
+        const contrast = document.getElementById('contrast');
+        const saturate = document.getElementById('saturate');
+
         let imgObj = new Image();
 
         imageLoader.addEventListener('change', function(e) {
@@ -155,32 +158,46 @@
                     canvas.width = imgObj.width;
                     canvas.height = imgObj.height;
                     canvas.style.display = 'block';
-                    controls.style.display = 'grid';
-                    uploadCard.style.display = 'none'; // إخفاء منطقة الرفع بعد اختيار الصورة
-                    draw();
+                    document.getElementById('manualUI').style.display = 'block';
+                    document.getElementById('filtersUI').style.display = 'grid';
+                    document.getElementById('uploadBox').style.display = 'none';
+                    updateImage();
                 }
                 imgObj.src = event.target.result;
             }
             reader.readAsDataURL(e.target.files[0]);
         });
 
-        function applyFilter(filterValue) {
-            currentFilter = filterValue;
-            draw();
+        // الاستماع لتغييرات أشرطة التحكم
+        [brightness, contrast, saturate].forEach(input => {
+            input.addEventListener('input', updateImage);
+        });
+
+        function updateImage() {
+            const filterString = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturate.value}%)`;
+            ctx.filter = filterString;
+            ctx.drawImage(imgObj, 0, 0);
         }
 
-        function draw() {
-            ctx.filter = currentFilter;
+        function setPreset(filter) {
+            // إعادة تصفير الأشرطة عند اختيار فلتر جاهز (اختياري)
+            ctx.filter = filter;
             ctx.drawImage(imgObj, 0, 0);
+        }
+
+        function resetAll() {
+            brightness.value = 100;
+            contrast.value = 100;
+            saturate.value = 100;
+            updateImage();
         }
 
         function downloadImage() {
             const link = document.createElement('a');
-            link.download = 'PhotoPro_Edit.png';
+            link.download = 'Carthage_Photo.png';
             link.href = canvas.toDataURL();
             link.click();
         }
     </script>
 </body>
 </html>
-
