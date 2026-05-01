@@ -3,41 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محرر ومحمل الصور</title>
+    <title>PhotoPro - محرر الصور الاحترافي</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #1a1a1a; color: white; padding: 20px; }
-        .upload-section { margin-bottom: 20px; padding: 20px; border: 2px dashed #444; border-radius: 10px; }
-        img, canvas { max-width: 100%; border-radius: 10px; margin-top: 20px; display: none; }
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 400px; margin: 20px auto; }
-        button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; background: #007bff; color: white; font-weight: bold; }
-        .download-btn { background-color: #28a745; grid-column: span 2; margin-top: 10px; }
-        input[type="file"] { margin-top: 10px; }
+        :root {
+            --primary: #007aff;
+            --success: #34c759;
+            --bg: #000000;
+            --card-bg: #1c1c1e;
+            --text: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #007aff, #00c6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .upload-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px dashed #3a3a3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-upload {
+            background: var(--primary);
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        #imageCanvas {
+            width: 100%;
+            border-radius: 15px;
+            background: #2c2c2e;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: var(--card-bg);
+            border: 1px solid #3a3a3c;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            background: #2c2c2e;
+        }
+
+        .btn-download {
+            grid-column: span 2;
+            background: var(--success);
+            border: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .footer-tag {
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: #8e8e93;
+        }
     </style>
 </head>
 <body>
 
-    <h2>محرر الصور مع خاصية التحميل</h2>
-    
-    <div class="upload-section">
-        <p>اختر صورة من هاتفك:</p>
-        <input type="file" id="imageLoader" accept="image/*">
-    </div>
+    <div class="app-container">
+        <header>
+            <h1>PHOTOPRO</h1>
+            <p style="color: #8e8e93; font-size: 0.9rem;">محرر الصور الذكي من هاتفك</p>
+        </header>
 
-    <canvas id="imageCanvas"></canvas>
-    <img id="displayImage" src="#" alt="صورتك">
+        <div class="upload-card" id="uploadCard">
+            <label for="imageLoader" class="custom-upload">إضافة صورة +</label>
+            <input type="file" id="imageLoader" accept="image/*">
+            <p style="font-size: 0.8rem; color: #8e8e93; margin-top: 10px;">اختر صورة لبدء التعديل</p>
+        </div>
 
-    <div class="controls">
-        <button onclick="applyFilter('grayscale(100%)')">أبيض وأسود</button>
-        <button onclick="applyFilter('sepia(100%)')">طابع قديم</button>
-        <button onclick="applyFilter('contrast(150%)')">تباين عالٍ</button>
-        <button onclick="applyFilter('none')">الأصلية</button>
-        <button class="download-btn" onclick="downloadImage()">تحميل الصورة المعدلة ↓</button>
+        <canvas id="imageCanvas"></canvas>
+
+        <div class="toolbar" id="controls" style="display: none;">
+            <button class="btn" onclick="applyFilter('grayscale(100%)')">أبيض وأسود</button>
+            <button class="btn" onclick="applyFilter('sepia(100%)')">طابع كلاسيك</button>
+            <button class="btn" onclick="applyFilter('brightness(130%) contrast(110%)')">تحسين إضاءة</button>
+            <button class="btn" onclick="applyFilter('none')">الأصلية</button>
+            <button class="btn btn-download" onclick="downloadImage()">حفظ الصورة في الهاتف ↓</button>
+        </div>
+
+        <div class="footer-tag">بواسطة مبرمج GitHub الواعد</div>
     </div>
 
     <script>
         const imageLoader = document.getElementById('imageLoader');
         const canvas = document.getElementById('imageCanvas');
         const ctx = canvas.getContext('2d');
+        const controls = document.getElementById('controls');
+        const uploadCard = document.getElementById('uploadCard');
         let currentFilter = 'none';
         let imgObj = new Image();
 
@@ -45,10 +152,11 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 imgObj.onload = function() {
-                    // ضبط حجم الـ canvas ليكون نفس حجم الصورة الأصلية
                     canvas.width = imgObj.width;
                     canvas.height = imgObj.height;
-                    canvas.style.display = 'inline-block';
+                    canvas.style.display = 'block';
+                    controls.style.display = 'grid';
+                    uploadCard.style.display = 'none'; // إخفاء منطقة الرفع بعد اختيار الصورة
                     draw();
                 }
                 imgObj.src = event.target.result;
@@ -67,13 +175,12 @@
         }
 
         function downloadImage() {
-            // إنشاء رابط وهمي لتحميل الصورة
             const link = document.createElement('a');
-            link.download = 'my-edited-photo.png';
+            link.download = 'PhotoPro_Edit.png';
             link.href = canvas.toDataURL();
             link.click();
         }
     </script>
-
 </body>
 </html>
+
