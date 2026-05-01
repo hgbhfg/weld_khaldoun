@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر الصور</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #222; color: white; padding: 20px; }
+        img { max-width: 90%; border-radius: 15px; margin-bottom: 20px; transition: 0.5s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 400px; margin: auto; }
+        button { padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: #444; color: white; }
+        button:active { background: #666; }
+    </style>
+</head>
+<body>
+
+    <h2>مُعالج الصور الذكي</h2>
+    
+    <img id="myPhoto" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500" alt="صورة للتجربة">
+
+    <div class="controls">
+        <button onclick="applyFilter('grayscale(100%)')">أبيض وأسود</button>
+        <button onclick="applyFilter('sepia(100%)')">قديم (Sepia)</button>
+        <button onclick="applyFilter('brightness(150%)')">زيادة الإضاءة</button>
+        <button onclick="applyFilter('none')">إعادة الصورة الأصلية</button>
+    </div>
+
+    <script>
+        function applyFilter(filterValue) {
+            document.getElementById('myPhoto').style.filter = filterValue;
+        }
+    </script>
+
+</body>
+</html>
