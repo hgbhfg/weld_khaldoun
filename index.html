@@ -10,6 +10,7 @@
     <style>
         :root {
             --accent: #ff2d55;
+            --magic: #a855f7;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
         }
@@ -49,25 +50,26 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .app-container {
             width: 100%;
             max-width: 450px;
             padding: 20px;
+            padding-bottom: 100px; /* مساحة للقائمة السفلية */
         }
 
-        /* رأس الصفحة العصري */
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         header h1 {
             background: linear-gradient(45deg, #fff, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin: 0;
         }
 
@@ -80,40 +82,38 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
             margin-bottom: 20px;
-            min-height: 200px;
+            min-height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        canvas { width: 100%; display: none; }
+        #imageCanvas {
+            max-width: 100%;
+            max-height: 70vh;
+            display: none;
+            touch-action: none; /* لمنع التمرير أثناء الرسم */
+        }
 
-        /* أزرار التحكم */
+        /* لوحات التحكم */
         .glass-panel {
             background: var(--glass);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-
-        /* زر التعديل التلقائي السحري */
-        .magic-btn {
-            width: 100%;
-            background: linear-gradient(90deg, #6366f1, #a855f7);
-            border: none;
-            color: white;
             padding: 15px;
-            border-radius: 12px;
-            font-weight: bold;
             margin-bottom: 15px;
-            cursor: pointer;
             display: none;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
         }
 
-        .control-row { margin-bottom: 15px; }
-        .control-row label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+        .panel-title {
+            font-size: 0.9rem;
+            color: var(--gold, #D4AF37);
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .control-row { margin-bottom: 10px; }
+        .control-row label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 5px; text-align: right; }
 
         input[type="range"] {
             width: 100%;
@@ -124,46 +124,112 @@
             accent-color: var(--accent);
         }
 
+        /* القائمة السفلية العصرية الأدوات */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 450px;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            z-index: 100;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-family: 'Readex Pro', sans-serif;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tool-btn.active {
+            color: var(--accent);
+        }
+
+        .tool-icon {
+            font-size: 1.2rem;
+        }
+
+        /* منطقة التصفح الأفقي للفلاتر */
         .filters-scroll {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding-bottom: 10px;
-            display: none;
+            padding-bottom: 5px;
         }
 
         .filter-chip {
             flex: 0 0 auto;
-            background: var(--glass);
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
             color: #ddd;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             cursor: pointer;
         }
 
-        .download-btn {
-            width: 100%;
+        .filter-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* أدوات الممحاة */
+        .eraser-controls {
+            display: none;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #downloadBtn {
             background: #fff;
             color: #000;
             border: none;
-            padding: 18px;
-            border-radius: 16px;
+            padding: 12px 20px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 1rem;
-            margin-top: 10px;
-            display: none;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
 
-        #upload-btn {
+        #upload-btn-label {
             background: var(--accent);
             color: white;
             padding: 15px 40px;
             border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 45, 85, 0.3);
         }
+        
+        /* مؤشر المسح */
+        #brush-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
     </style>
 </head>
 <body>
@@ -171,22 +237,22 @@
     <div id="splash-screen">
         <div class="ai-loader">CARTHAGE AI</div>
     </div>
+    
+    <div id="brush-cursor"></div>
 
     <div class="app-container">
         <header>
             <h1>Carthage AI</h1>
-            <p style="color:#555; font-size:0.8rem;">تعديل الصور بالذكاء البرمجي</p>
         </header>
 
         <div class="preview-area" id="dropZone">
-            <label id="upload-btn" for="imageLoader">تحميل صورة</label>
+            <label id="upload-btn-label" for="imageLoader">تحميل صورة</label>
             <input type="file" id="imageLoader" accept="image/*" style="display:none">
-            <canvas id="mainCanvas"></canvas>
+            <canvas id="imageCanvas"></canvas>
         </div>
 
-        <button class="magic-btn" id="magicBtn" onclick="autoEnhance()">✨ تحسين تلقائي ذكي</button>
-
-        <div class="glass-panel" id="manualUI" style="display:none">
+        <div class="glass-panel" id="adjustPanel">
+            <div class="panel-title">الضبط اليدوي</div>
             <div class="control-row">
                 <label>السطوع</label>
                 <input type="range" id="brightness" min="50" max="150" value="100">
@@ -197,25 +263,62 @@
             </div>
         </div>
 
-        <div class="filters-scroll" id="filtersUI">
-            <div class="filter-chip" onclick="setPreset('none')">الأصل</div>
-            <div class="filter-chip" onclick="setPreset('contrast(1.2) saturate(1.1) brightness(1.1)')">Vivid</div>
-            <div class="filter-chip" onclick="setPreset('grayscale(100%) contrast(1.2)')">Noir</div>
-            <div class="filter-chip" onclick="setPreset('sepia(0.3) brightness(0.9) contrast(1.2)')">Vintage</div>
-            <div class="filter-chip" onclick="setPreset('hue-rotate(180deg)')">Cyber</div>
+        <div class="glass-panel" id="filterPanel">
+            <div class="panel-title">الفلاتر الذكية</div>
+            <div class="filters-scroll">
+                <div class="filter-chip active" onclick="setPreset('none', this)">الأصل</div>
+                <div class="filter-chip" onclick="setPreset('contrast(1.2) saturate(1.1) brightness(1.1)', this)">Vivid</div>
+                <div class="filter-chip" onclick="setPreset('grayscale(100%) contrast(1.2)', this)">Noir</div>
+                <div class="filter-chip" onclick="setPreset('sepia(0.3) brightness(0.9) contrast(1.2)', this)">Vintage</div>
+                <div class="filter-chip" onclick="setPreset('contrast(1.5) saturate(1.5) hue-rotate(-15deg)', this)">Dramatic</div>
+            </div>
+        </div>
+        
+        <div class="glass-panel" id="eraserPanel">
+            <div class="panel-title">الممحاة المتطورة</div>
+            <p style="font-size: 0.75rem; color: #888; text-align: right; margin-top: 0;">امسح بإصبعك الأشياء المراد إزالتها. ستحاول الأداة دمج المنطقة مع المحيط.</p>
+            <div class="eraser-controls" style="display: flex;">
+                <div style="flex-grow: 1; text-align: right;">
+                    <label style="font-size: 0.75rem; color: #888;">حجم الممحاة</label>
+                    <input type="range" id="brushSize" min="5" max="50" value="20">
+                </div>
+                <button class="btn" onclick="resetEraser()" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; padding: 8px 15px; border-radius: 8px; font-size: 0.75rem;">إعادة المحاولة</button>
+            </div>
         </div>
 
-        <button class="download-btn" id="downloadBtn" onclick="downloadImage()">حفظ الصورة</button>
+    </div>
+
+    <div class="bottom-bar" id="toolBar" style="display: none;">
+        <button class="tool-btn active" onclick="showPanel('adjust')">
+            <span class="tool-icon">🎛️</span>
+            <span>ضبط</span>
+        </button>
+        <button class="tool-btn" onclick="showPanel('filter')">
+            <span class="tool-icon">🎬</span>
+            <span>فلاتر</span>
+        </button>
+        <button class="tool-btn" onclick="showPanel('eraser'); startEraserMode()">
+            <span class="tool-icon">✨</span>
+            <span>ممحاة ذكية</span>
+        </button>
+        <button id="downloadBtn" onclick="downloadImage()">حفظ</button>
     </div>
 
     <script>
         const imageLoader = document.getElementById('imageLoader');
-        const canvas = document.getElementById('mainCanvas');
+        const canvas = document.getElementById('imageCanvas');
         const ctx = canvas.getContext('2d');
         const br = document.getElementById('brightness');
         const sat = document.getElementById('saturate');
+        const brushSizeInput = document.getElementById('brushSize');
+        const brushCursor = document.getElementById('brush-cursor');
+        
         let imgObj = new Image();
+        let isEraserMode = false;
+        let isDrawing = false;
+        let brushSize = 20;
 
+        // واجهة البداية
         window.onload = () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
@@ -227,14 +330,16 @@
             const reader = new FileReader();
             reader.onload = (ev) => {
                 imgObj.onload = () => {
-                    canvas.width = imgObj.width;
-                    canvas.height = imgObj.height;
+                    // ضبط حجم الكانفاس ليتناسب مع الصورة والعرض
+                    const maxWidth = document.getElementById('dropZone').offsetWidth;
+                    const scale = maxWidth / imgObj.width;
+                    canvas.width = maxWidth;
+                    canvas.height = imgObj.height * scale;
+                    
                     canvas.style.display = 'block';
-                    document.getElementById('upload-btn').style.display = 'none';
-                    document.getElementById('manualUI').style.display = 'block';
-                    document.getElementById('filtersUI').style.display = 'flex';
-                    document.getElementById('magicBtn').style.display = 'block';
-                    document.getElementById('downloadBtn').style.display = 'block';
+                    document.getElementById('upload-btn-label').style.display = 'none';
+                    document.getElementById('toolBar').style.display = 'flex';
+                    showPanel('adjust'); // إظهار لوحة الضبط أولاً
                     update();
                 }
                 imgObj.src = ev.target.result;
@@ -242,37 +347,142 @@
             reader.readAsDataURL(e.target.files[0]);
         };
 
+        // تحديث الصورة بناءً على الضبط اليدوي
         function update() {
+            if (isEraserMode) return; // عدم التحديث أثناء وضع الممحاة
             ctx.filter = `brightness(${br.value}%) saturate(${sat.value}%)`;
-            ctx.drawImage(imgObj, 0, 0);
+            ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
         }
 
         [br, sat].forEach(i => i.oninput = update);
 
-        function setPreset(f) {
+        // تطبيق الفلاتر الجاهزة
+        function setPreset(f, el) {
+            isEraserMode = false;
+            // تحديث حالة الأزرار
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            
             ctx.filter = f;
-            ctx.drawImage(imgObj, 0, 0);
+            ctx.drawImage(imgObj, 0, 0, canvas.width, canvas.height);
         }
 
-        // ميزة التعديل التلقائي
-        function autoEnhance() {
-            br.value = 110; // زيادة الإضاءة قليلاً
-            sat.value = 125; // تحسين الألوان
-            // إضافة لمسة تباين برمجية
-            ctx.filter = `brightness(110%) saturate(125%) contrast(115%)`;
-            ctx.drawImage(imgObj, 0, 0);
-            alert("تم التحسين التلقائي بنجاح! ✨");
+        // إدارة لوحات التحكم
+        function showPanel(panelName) {
+            // إخفاء كل اللوحات وتفعيل الأزرار
+            document.querySelectorAll('.glass-panel').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            
+            // إظهار اللوحة المطلوبة وتفعيل زرها
+            document.getElementById(panelName + 'Panel').style.display = 'block';
+            event.currentTarget.classList.add('active');
+            
+            if (panelName !== 'eraser') {
+                isEraserMode = false;
+                canvas.style.cursor = 'default';
+                brushCursor.style.display = 'none';
+            }
         }
+
+        // --- منطق الممحاة المتطورة ---
+
+        function startEraserMode() {
+            isEraserMode = true;
+            canvas.style.cursor = 'none'; // إخفاء مؤشر الماوس العادي
+            updateBrushCursor();
+        }
+
+        brushSizeInput.oninput = (e) => {
+            brushSize = e.target.value;
+            updateBrushCursor();
+        };
+
+        function updateBrushCursor() {
+            brushCursor.style.width = brushSize + 'px';
+            brushCursor.style.height = brushSize + 'px';
+        }
+
+        // التعامل مع اللمس والرسم على الكانفاس
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (evt.clientX || evt.touches[0].clientX) - rect.left,
+                y: (evt.clientY || evt.touches[0].clientY) - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            if (!isEraserMode) return;
+            isDrawing = true;
+            ctx.beginPath();
+            const pos = getMousePos(canvas, e);
+            ctx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        }
+
+        function draw(e) {
+            if (!isDrawing || !isEraserMode) return;
+            const pos = getMousePos(canvas, e);
+            
+            // تحريك مؤشر الفرشاة مع الإصبع
+            brushCursor.style.display = 'block';
+            brushCursor.style.left = (e.clientX || e.touches[0].clientX) - brushSize/2 + 'px';
+            brushCursor.style.top = (e.clientY || e.touches[0].clientY) - brushSize/2 + 'px';
+
+            // التقنية المتطورة: استخدام 'destination-out' للمسح
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            
+            e.preventDefault();
+        }
+
+        function stopDrawing() {
+            if (isDrawing && isEraserMode) {
+                // إعادة الوضع الطبيعي لرسم الكانفاس
+                ctx.globalCompositeOperation = 'source-over';
+                
+                // هنا يمكن إضافة تأثير بصري يوحي ببدء "المعالج الذكي"
+                showProcessingFeedback();
+            }
+            isDrawing = false;
+        }
+
+        // تأثير بصري بسيط يوحي بالمعالجة الذكية
+        function showProcessingFeedback() {
+            canvas.style.filter = 'blur(5px)';
+            setTimeout(() => {
+                canvas.style.filter = 'none';
+                // في تطبيق حقيقي، هنا يتم استدعاء خادم AI لملء الفراغ.
+                // حالياً، نحن نجعل الجزء شفافاً، مما يجعله يندمج مع خلفية الكانفاس السوداء.
+            }, 500);
+        }
+
+        function resetEraser() {
+            // إعادة رسم الصورة الأصلية لإلغاء المسح
+            ctx.globalCompositeOperation = 'source-over';
+            update();
+        }
+
+        // أحداث الماوس واللمس
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDrawing);
+
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        window.addEventListener('touchend', stopDrawing);
+
 
         function downloadImage() {
             const link = document.createElement('a');
-            link.download = 'Carthage_AI.png';
+            link.download = 'Carthage_AI_Edit.png';
+            // تحويل الكانفاس إلى صورة، مع العلم أن الأجزاء الممسوحة ستكون سوداء (خلفية التطبيق)
             link.href = canvas.toDataURL();
             link.click();
         }
     </script>
 </body>
 </html>
-
-            
-                
