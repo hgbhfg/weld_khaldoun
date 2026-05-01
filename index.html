@@ -126,15 +126,16 @@
             </div>
         </div>
 
-        <div class="filters-grid" id="filtersUI">
-            <button class="btn" onclick="setPreset('grayscale(100%)')">أبيض وأسود</button>
-            <button class="btn" onclick="setPreset('sepia(80%) contrast(110%)')">قرطاج القديمة</button>
-            <button class="btn" onclick="setPreset('hue-rotate(180deg)')">ألوان خيالية</button>
-            <button class="btn" onclick="setPreset('invert(100%)')">سالب (Negative)</button>
-            <button class="btn" onclick="setPreset('blur(2px)')">تغبيش هادئ</button>
+                <div class="filters-grid" id="filtersUI">
+            <button class="btn" onclick="setPreset('sepia(0.6) contrast(1.2) brightness(0.9) hue-rotate(-10deg)')">فيلم 1970</button>
+            <button class="btn" onclick="setPreset('grayscale(100%) contrast(1.5) brightness(0.9)')">كاميرا حربية</button>
+            <button class="btn" onclick="setPreset('contrast(1.1) brightness(1.1) saturate(1.3) sepia(0.2)')">بولارايت</button>
+            <button class="btn" onclick="setPreset('brightness(1.1) saturate(0.7) contrast(0.9) hue-rotate(20deg)')">ثمانينات</button>
+            <button class="btn" onclick="setPreset('contrast(1.4) sepia(0.3) saturate(1.4) hue-rotate(-30deg)')">سينمائي قديم</button>
             <button class="btn" onclick="resetAll()">إعادة الأصل</button>
             <button class="btn btn-main" onclick="downloadImage()">حفظ في الهاتف (نصر قرطاج) ↓</button>
-        </div>
+                </div>
+        
 
         <footer>صُنع بلمسة تونسية على GitHub</footer>
     </div>
